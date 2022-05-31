@@ -16,5 +16,3 @@ while true; do
   set -e
   sleep 1
 done
-
-done
