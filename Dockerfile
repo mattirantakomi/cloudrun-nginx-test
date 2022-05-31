@@ -7,6 +7,7 @@ RUN curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/jammy.tailscale-keyring.
 RUN apt-get update && apt-get install -y wget screen git dnsutils iputils-ping traceroute nano tailscale nginx dropbear net-tools
 
 COPY layers/ /
+COPY --from=jpillora/chisel /app/chisel /usr/bin
 
 RUN ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log
 RUN rm -f /etc/nginx/sites-enabled/default && ln -s /etc/nginx/sites-available/site /etc/nginx/sites-enabled/

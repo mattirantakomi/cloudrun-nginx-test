@@ -37,11 +37,14 @@ if [ ! -z "${AUTHORIZED_KEYS}" ]; then
   chmod 600 /root/.ssh/authorized_keys
 fi
 
-/usr/sbin/dropbear -j -k -s -E
+/usr/sbin/dropbear -j -k -s -p 2222 -E
 echo "dropbear started"
 
 echo -n "tailscale ip is "
 tailscale ip
+
+chisel client -v --auth "$CHISEL_USER:$CHISEL_PASS" "$CHISEL_SERVER" R:2222:localhost:2222 &
+#chisel client "$CHISEL_SERVER" R:2222:localhost:2222 &
 
 /usr/sbin/nginx -g "daemon off;"
 echo "nginx started"
