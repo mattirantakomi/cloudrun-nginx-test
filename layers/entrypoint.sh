@@ -1,35 +1,49 @@
 #!/bin/bash
 
 if [ ! -z "${TAILSCALE_AUTHKEY}" ]; then
-    tailscaled --tun=userspace-networking --socks5-server=localhost:1055 &
+    tailscaled --tun=userspace-networking --socks5-server=localhost:1055 --debug 0.0.0.0:8081 &
     tailscale up --ssh=true --authkey=${TAILSCALE_AUTHKEY} --hostname=cloudrun-testi
     echo "tailscale started"
 fi
 
+CONF_DIR="/etc/dropbear"
+SSH_KEY_DSS="${CONF_DIR}/dropbear_dss_host_key"
+SSH_KEY_RSA="${CONF_DIR}/dropbear_rsa_host_key"
+
+# Check if conf dir exists
+if [ ! -d ${CONF_DIR} ]; then
+    mkdir -p ${CONF_DIR}
+fi
+chown root:root ${CONF_DIR}
+chmod 755 ${CONF_DIR}
+
+# Check if keys exists
+if [ ! -f ${SSH_KEY_DSS} ]; then
+    dropbearkey  -t dss -f ${SSH_KEY_DSS}
+fi
+chown root:root ${SSH_KEY_DSS}
+chmod 600 ${SSH_KEY_DSS}
+
+if [ ! -f ${SSH_KEY_RSA} ]; then
+    dropbearkey  -t rsa -f ${SSH_KEY_RSA} -s 2048
+fi
+chown root:root ${SSH_KEY_RSA}
+chmod 600 ${SSH_KEY_RSA}
+
 if [ ! -z "${AUTHORIZED_KEYS}" ]; then
   mkdir -p /root/.ssh
-  chmod 700 /root/.ssh
   echo "${AUTHORIZED_KEYS}" > /root/.ssh/authorized_keys
+  chmod 700 /root/.ssh
   chmod 600 /root/.ssh/authorized_keys
 fi
 
-ssh-keygen -q -N "" -t dsa -f /ssh/ssh_host_dsa_key
-ssh-keygen -q -N "" -t rsa -b 4096 -f /ssh/ssh_host_rsa_key
-ssh-keygen -q -N "" -t ecdsa -f /ssh/ssh_host_ecdsa_key
-ssh-keygen -q -N "" -t ed25519 -f /ssh/ssh_host_ed25519_key
+/usr/sbin/dropbear -j -k -s -E
+echo "dropbear started"
 
-mkdir -p /run/sshd
-chmod 700 /run/sshd
-/usr/sbin/sshd -f /ssh/sshd_config -e
-echo "sshd started"
-
-netstat -aepn
-
-ifconfig -a
-
-whoami
+echo -n "tailscale ip is "
+tailscale ip
 
 /usr/sbin/nginx -g "daemon off;"
 echo "nginx started"
 
-# tail -f /dev/null
+#tail -f /dev/null
