@@ -1,18 +1,13 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/bash
 
-_term() {
-  >&2 echo "TERM (entrypoint.sh)"
-  exit 0
-}
-trap "_term" TERM
+if [ ! -z "${TAILSCALE_AUTHKEY}" ]; then
+    tailscaled --tun=userspace-networking &
+    tailscale up --ssh=true --authkey=${TAILSCALE_AUTHKEY}
+    echo "tailscale started"
+fi
 
-echo "{\"<$CHISEL_USER:$CHISEL_PASS>\": [\"\"]}" > /root/users.json
+echo -n "tailscale ip is "
+tailscale ip
 
-while true; do
-  set +e
-    chisel server -v --authfile /root/users.json --port $PORT --reverse
-    # chisel server --port $PORT --reverse
-  set -e
-  sleep 1
-done
+/usr/sbin/nginx -g "daemon off;"
+echo "nginx started"
