@@ -9,6 +9,5 @@ RUN apt-get update && apt-get install -y wget screen git dnsutils iputils-ping t
 COPY layers/ /
 
 RUN ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log
-#RUN rm -f /etc/nginx/sites-enabled/default && ln -s /etc/nginx/sites-available/site /etc/nginx/sites-enabled/
 
 ENTRYPOINT ["/entrypoint.sh"]

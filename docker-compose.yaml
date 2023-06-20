@@ -1,6 +1,0 @@
-version: "2.1"
-services:
-  chisel-server:
-    build: .
-    # image: "mattirantakomi/ubuntu-22.04:latest"
-    image: europe-north1-docker.pkg.dev/testailua-223315/testi/chisel-server:latest
