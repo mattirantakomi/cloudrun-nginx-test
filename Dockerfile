@@ -7,7 +7,13 @@ RUN curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/jammy.tailscale-keyring.
 RUN apt-get update && apt-get install -y wget screen git dnsutils iputils-ping traceroute nano tailscale nginx net-tools
 
 COPY layers/ /
+RUN chown -R nobody /var/lib/nginx /var/log/nginx 
+
+RUN sed -i -e 's/^user.*//g' /etc/nginx/nginx.conf
+RUN sed -i -e 's/^pid.*/pid \/tmp\/nginx.pid;/g' /etc/nginx/nginx.conf
 
 RUN ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log
+
+USER nobody
 
 ENTRYPOINT ["/entrypoint.sh"]
