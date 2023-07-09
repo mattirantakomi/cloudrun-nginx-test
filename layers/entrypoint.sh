@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ ! -z "${TAILSCALE_AUTHKEY}" ]; then
-    tailscaled --tun=userspace-networking &
+    tailscaled --tun=userspace-networking --verbose=10 &
     tailscale up --ssh=true --authkey=${TAILSCALE_AUTHKEY}
     echo "tailscale started"
 
