@@ -8,15 +8,10 @@ RUN apt-get update && apt-get install -y wget screen git dnsutils iputils-ping t
 
 COPY layers/ /
 
-RUN sed -i -e 's/^user.*//g' /etc/nginx/nginx.conf
-RUN sed -i -e 's/^pid.*/pid \/tmp\/nginx.pid;/g' /etc/nginx/nginx.conf
 RUN sed -i -e 's/80 d/8080 d/g' /etc/nginx/sites-available/default
 
 RUN ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log
 
-RUN groupadd -g 1000 www && useradd -m -d /var/lib/nginx -s /bin/bash -u 1000 -g 1000 www
-RUN mkdir -p /var/lib/nginx /var/run/tailscale && chown -R www /var/lib/nginx /var/log/nginx /var/run/tailscale
-
-USER www
+RUN mkdir -p /var/lib/nginx /var/run/tailscale
 
 ENTRYPOINT ["/entrypoint.sh"]
