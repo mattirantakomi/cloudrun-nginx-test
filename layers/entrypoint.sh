@@ -27,7 +27,7 @@ dropbearkey -t rsa -f /tmp/dropbear_rsa_host_key
 dropbearkey -t ecdsa -f /tmp/dropbear_ecdsa_host_key
 dropbearkey -t ed25519 -f /tmp/dropbear_ed25519_host_key
 echo "generated dropbears ssh host keys"
-dropbear -B -E -r /tmp/dropbear_dss_host_key -r /tmp/dropbear_rsa_host_key -r /tmp/dropbear_ecdsa_host_key -r /tmp/dropbear_ed25519_host_key -s -p 2222 -F
+dropbear -B -E -r /tmp/dropbear_dss_host_key -r /tmp/dropbear_rsa_host_key -r /tmp/dropbear_ecdsa_host_key -r /tmp/dropbear_ed25519_host_key -s -p 2222
 echo "started dropbear"
 
 /usr/sbin/nginx -g "daemon off;"
