@@ -14,4 +14,6 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/
 
 RUN mkdir -p /var/lib/nginx /var/run/tailscale
 
+USER root
+
 ENTRYPOINT ["/entrypoint.sh"]
